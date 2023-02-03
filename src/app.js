@@ -15,7 +15,6 @@ class Events {
   }
 
   _clickEvent() {
-    // this.#btnAdd.addEventListener('click', this._saveItem.bind(this));
     this.#btnAdd.addEventListener('click', () => {
       if (this.#btnAdd.innerHTML === 'Save changes') this._saveChanges();
       if (this.#btnAdd.innerHTML === 'Add expense') this._saveItem();
@@ -25,7 +24,6 @@ class Events {
     btnBudget.addEventListener('click', this._setBudget.bind(this));
 
     const budgetList = document.querySelector('.budget__list');
-    // budgetList.addEventListener('click', this._deleteItem.bind(this));
     budgetList.addEventListener('click', this._clickHandler.bind(this));
   }
 
@@ -40,7 +38,7 @@ class Events {
     this.#inpValueName.disabled = false;
     this.#inpValueCost.disabled = false;
     this.#btnAdd.disabled = false;
-    this.#btnAdd.classList.add('button');
+    this.#btnAdd.classList.remove('disabled');
   }
 
   _saveItem() {
@@ -73,11 +71,7 @@ class Events {
     this.#inpValueName.value = name;
     this.#inpValueCost.value = cost;
 
-    // name = this.#inpValueName.value;
-    // cost = this.#inpValueCost.value;
-    // this._saveChanges(target);
     state.editTarget = target;
-    // this._deleteItem(click);
   }
 
   _saveChanges() {
@@ -102,7 +96,6 @@ class Events {
         } else this._updateBudget();
 
         this.#btnAdd.innerHTML = 'Add expense';
-        // this._updateBudget();
         view._clear();
       }
     });
@@ -130,7 +123,6 @@ class Events {
       this.#inpValueName.disabled = true;
       this.#inpValueCost.disabled = true;
       this.#btnAdd.disabled = true;
-      this.#btnAdd.classList.remove('button');
     }
   }
 
@@ -143,40 +135,42 @@ class View {
   _takeTime() {
     const date = new Date();
     const hour = date.getHours();
+    const minutes = date.getMinutes();
     const day = date.getDate();
+    const month = date.getMonth() + 1;
 
-    return [hour, day];
+    return [hour, minutes, day, month];
   }
 
   _renderItem(inpValueName, inpValueCost) {
     const budgetList = document.querySelector('.budget__list');
 
     const time = this._takeTime();
-    const [hour, day] = time;
+    const [hour, minutes, day, month] = time;
     const id = events._makeID();
     const html = `
-        <div class="budget__list-item" data-id="${id}">
-            <div class="budget__list-details">
+      <div class="budget__list-item" data-id="${id}">
+        <div class="budget__list-details">
           <ol class="budget__list-details">
             <ul>
-            <li>Name:</li>
-            <li class="detail budget__list-title">${inpValueName}</li>
+              <li>Name:</li>
+              <li class="detail budget__list-title">${inpValueName}</li>
             </ul>
             <ul>
-            <li>Cost:</li>
-            <li class="detail budget__list-cost">${inpValueCost}</li>
+              <li>Cost:</li>
+              <li class="detail budget__list-cost">${inpValueCost}</li>
             </ul>
             <ul>
-            <li>Time:</li>
-            <li class="detail budget__list-time">${day}, ${hour}</li>
+              <li>Time:</li>
+              <li class="detail budget__list-time">${day}.${month}, ${hour}:${minutes}</li>
             </ul>
           </ol>
-            </div>
-            <div class="btns">
-              <button class="btn btn-delete">Delete</button>
-              <button class="btn btn-edit">Edit</button>
-            </div>
-          </div>`;
+        </div>
+        <div class="btns">
+          <button class="btn btn-delete">Delete</button>
+          <button class="btn btn-edit">Edit</button>
+        </div>
+      </div>`;
     budgetList.insertAdjacentHTML('afterbegin', html);
     events._updateBudget();
     this._clear();
